@@ -9,10 +9,14 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 public class TranslateSybaseToDoc {
     public static final String SQL_FILE = "E:\\Projetos\\eqt\\eqt.1\\";
+
+    private String dbName;
+    private String ownerName;
+    private String procName;
+
     private static final String LER_SQL = "select object_name(c.id) nome,o.type,c.text\n" +
             "from syscomments c \n" +
             ",    sysobjects o\n" +
@@ -25,8 +29,8 @@ public class TranslateSybaseToDoc {
             if (fileEntry.isDirectory()) {
                 listFilesForFolder(fileEntry);
             } else {
-                System.out.println(fileEntry.getName());
-                if (fileEntry.getName().contains("spr")){
+                //System.out.println(fileEntry.getName());
+                if (fileEntry.getName().contains("spr")) {
                     processar(fileEntry);
                 }
             }
@@ -38,14 +42,18 @@ public class TranslateSybaseToDoc {
         listFilesForFolder(folder);
     }
 
-    public static void processar(File fileEntry) throws IOException {
+    public void processar(File fileEntry) throws IOException {
 
         //        File file = new File(SQL_FILE);
 //        FileInputStream stream = new FileInputStream(file);
 
-        System.out.println("Filename:" + fileEntry);
-        CharStream s = CharStreams.fromFileName(fileEntry.getAbsolutePath().toString());
+        String[] owner = fileEntry.getName().split("\\.");
+        this.dbName = owner[0];
+        this.ownerName = owner[1];
+        this.procName = owner[2];
 
+        //System.out.println("Filename:" + fileEntry);
+        CharStream s = CharStreams.fromFileName(fileEntry.getAbsolutePath().toString());
 
 
         CaseChangingCharStream upper = new CaseChangingCharStream(s, true);
@@ -62,10 +70,10 @@ public class TranslateSybaseToDoc {
         // Create a generic parse tree walker that can trigger callbacks
         ParseTreeWalker walker = new ParseTreeWalker();
         // Walk the tree created during the parse, trigger callbacks
-        walker.walk(new CustomListener(), tree);
-        System.out.println(); // print a \n after translation
+        walker.walk(new CustomListener(dbName, ownerName, procName), tree);
+        //System.out.println(); // print a \n after translation
 
-        System.out.println(tree.toStringTree(parser));
+        //System.out.println(tree.toStringTree(parser));
     }
 
 
