@@ -43,13 +43,12 @@ public class CustomListener extends TSqlSyb155ParserBaseListener {
             } else {
                 proc.setSchema(this.ownerName);
             }
-            proc.setName(ctx.procedure.getText());
             //System.out.println("enterFunc_proc_name:" + ctx.procedure.getText());
         } else {
             proc.setDatabase("master");
             proc.setSchema("dbo");
-
         }
+        proc.setName(ctx.procedure.getText());
         System.out.println("procxproc,"
                 + ctx.start.getLine() + ","
                 + ctx.start.getCharPositionInLine() + ","
@@ -61,4 +60,41 @@ public class CustomListener extends TSqlSyb155ParserBaseListener {
                 + proc.getName());
 
     }
+
+    @Override
+    public void exitInsert_statement(TSqlSyb155Parser.Insert_statementContext ctx) {
+        System.out.println("procxinsert"
+                + ctx.start.getLine() + ","
+                + ctx.start.getCharPositionInLine() + ","
+                + this.dbName + ","
+                + this.ownerName + ","
+                + this.procName + ","
+                + ctx.ddl_object().full_table_name().getText()
+        );
+    }
+
+    @Override
+    public void exitUpdate_statement(TSqlSyb155Parser.Update_statementContext ctx) {
+        System.out.println("procxupdate"
+                + ctx.start.getLine() + ","
+                + ctx.start.getCharPositionInLine() + ","
+                + this.dbName + ","
+                + this.ownerName + ","
+                + this.procName + ","
+                + ctx.ddl_object().full_table_name().getText()
+        );
+    }
+
+    @Override
+    public void exitDelete_statement(TSqlSyb155Parser.Delete_statementContext ctx) {
+        System.out.println("procxdelete"
+                + ctx.start.getLine() + ","
+                + ctx.start.getCharPositionInLine() + ","
+                + this.dbName + ","
+                + this.ownerName + ","
+                + this.procName + ","
+                + ctx.delete_statement_from().table_var.getText()
+        );
+    }
+
 }
